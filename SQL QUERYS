@@ -1,0 +1,76 @@
+1. DATABASE DEVELOPMENT - Left Join
+
+SELECT customer.[CustomerID], customer.[Title], customer.[GivenName], customer.[MiddleInitial], customer.[Surname], customer.[CardType], customer.[Occupation], customer.[Gender], customer.[Age], customer.[Location], customer.[ComChannel], customer.[MotorID], customer.[HealthID], customer.[TravelID], health_policies.[policyStart], health_policies.[policyEnd], health_policies.[HealthType], health_policies.[HealthDependentsAdults], health_policies.[DependentsKids], travel_policies.[policyStart], travel_policies.[PolicyEnd], travel_policies.[TravelType], motor_policies.[PolicyStart], motor_policies.[PolicyEnd], motor_policies.[MotorType], motor_policies.[veh_value], motor_policies.[Exposure], motor_policies.[clm], motor_policies.[Numclaims], motor_policies.[v_body], motor_policies.[v_age], motor_policies.[LastClaimDate]
+INTO ABT
+FROM ((customer LEFT JOIN motor_policies ON customer.MotorID = motor_policies.MotorID) LEFT JOIN health_policies ON customer.HealthID = health_policies.HealthID)
+LEFT JOIN travel_policies ON customer.TravelID = travel_policies.TravelID;
+
+2. DESCRIPTIVE ANALYSIS
+
+Total customers
+
+SELECT COUNT(CustomerID) AS Total_Customers, COUNT(MotorID) AS Total_Motor_Policies, COUNT(TravelID) AS Total_Travel_Policies, COUNT(HealthID) AS Total_Health_Policies
+FROM ABT;
+
+ComChannel
+
+SELECT ComChannel, COUNT(CustomerID) AS Total_Customers, COUNT(MotorID) AS Motor_Policies, COUNT(TravelID) AS Travel_Policies, COUNT(HealthID) AS Health_Policies
+FROM ABT
+GROUP BY ComChannel;
+
+CardType
+
+SELECT CardType, COUNT(MotorID) AS Motor_Policies, COUNT(TravelID) AS Travel_Policies, COUNT(HealthID) AS Health_Policies
+FROM ABT
+GROUP BY CardType; Gender
+SELECT Gender, COUNT(MotorID) AS Motor_Policies, COUNT(TravelID) AS Travel_Policies, COUNT(HealthID) AS Health_Policies
+FROM ABT
+GROUP BY Gender;
+
+Location
+
+SELECT Location, COUNT(MotorID) AS Motor_Policies, COUNT(TravelID) AS Travel_Policies, COUNT(HealthID) AS Health_Policies
+FROM ABT
+GROUP BY Location;
+
+Age Travel Insurance
+
+SELECT ROUND(Avg(ABT.Age)) AS Avg_Age_Travel, ROUND(Max(ABT.Age)) AS Max_Age, ROUND(Min(ABT.Age)) AS Min_Age
+FROM ABT
+WHERE TravelID IS NOT NULL;
+
+Age Motor Insurance
+
+SELECT ROUND(Avg(ABT.Age)) AS Avg_Age_Motor, ROUND(Max(ABT.Age)) AS Max_Age, ROUND(Min(ABT.Age)) AS Min_Age
+FROM ABT
+WHERE MotorID IS NOT NULL;
+
+Age Health Insurance
+
+SELECT ROUND(Avg(ABT.Age)) AS Avg_Age_Health, ROUND(Max(ABT.Age)) AS Max_Age, ROUND(Min(ABT.Age)) AS Min_Age
+FROM ABT
+WHERE HealthID IS NOT NULL; Vehicle Value
+SELECT ROUND(10000*(Avg(Combine_Data.veh_value))) AS Avg_VALUE, 10000*(Max(Combine_Data.veh_value)) AS Max_VALUE, 10000*(Min(Combine_Data.veh_value)) AS Min_VALUE
+FROM Combine_Data
+WHERE MotorID IS NOT NULL;
+
+Travel Type Insurances
+
+SELECT TravelType, COUNT(TravelType) AS Total, ROUND(AVG(Age)) AS AvgAge FROM Combine_Data
+WHERE TravelID IS NOT NULL
+GROUP BY TravelType
+ORDER BY COUNT(TravelType);
+
+Motor Type Insurance
+
+SELECT MotorType, COUNT(MotorType) AS Total, ROUND(AVG(Age)) AS AvgAge FROM Combine_Data
+WHERE MotorID IS NOT NULL
+GROUP BY MotorType
+ORDER BY COUNT(MotorType);
+
+Health Type Insurance
+
+SELECT HealthType, COUNT(HealthType) AS Total, ROUND(AVG(Age)) AS AvgAge FROM Combine_Data
+WHERE HealthID IS NOT NULL
+GROUP BY HealthType
+ORDER BY COUNT(HealthType);
