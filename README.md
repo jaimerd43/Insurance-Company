@@ -6,6 +6,6 @@
 * Descriptive analysis in SQL and a highly detailed descriptive analysis with R.
 * SQL and R.
 
-* DATA BASE STRUCTURE
+## DATA BASE STRUCTURE
 
 <img width="456" alt="Captura de pantalla 2024-01-22 a las 12 25 15" src="https://github.com/jaimerd43/Insurance-Company-/assets/146437599/5ecf8ef2-c0ac-44c4-988b-4c8d90e4a19f">
